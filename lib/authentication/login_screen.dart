@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:crime_no_more_geolocation2/mainScreens/main_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -9,6 +10,20 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailTextEditingController = TextEditingController();
   TextEditingController passwordTextEditingController = TextEditingController();
+
+  validateForm() {
+    // for email
+    if (emailTextEditingController.text.isEmpty) {
+      Fluttertoast.showToast(msg: "Email is required");
+    } else if (!emailTextEditingController.text.contains("@")) {
+      Fluttertoast.showToast(msg: "Email is invalid");
+    }
+
+    //for password
+    else if (passwordTextEditingController.text.isEmpty) {
+      Fluttertoast.showToast(msg: "Password is required");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,10 +103,11 @@ class _LoginScreenState extends State<LoginScreen> {
               // for button
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MainScreen()));
+                  validateForm();
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => const MainScreen()));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color.fromARGB(255, 82, 178, 202),
