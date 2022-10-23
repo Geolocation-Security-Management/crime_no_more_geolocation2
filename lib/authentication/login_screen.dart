@@ -1,3 +1,4 @@
+import 'package:crime_no_more_geolocation2/splashScreen/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:crime_no_more_geolocation2/mainScreens/main_screen.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -27,24 +28,24 @@ class _LoginScreenState extends State<LoginScreen> {
     else if (passwordTextEditingController.text.isEmpty) {
       Fluttertoast.showToast(msg: "Password is required");
     } else {
-      saveGuardInfoNow();
+      loginGuardInfoNow();
     }
   }
 
   //save the Guard info into the database
-  saveGuardInfoNow() async {
+  loginGuardInfoNow() async {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (BuildContext c) {
         return ProgressDialog(
-          message: "Authenticating, Please wait...",
+          message: "Logging in, Please wait...",
         );
       },
     );
 
     final User? firebaseUser = (await fAuth
-            .createUserWithEmailAndPassword(
+            .signInWithEmailAndPassword(
       email: emailTextEditingController.text.trim(),
       password: passwordTextEditingController.text.trim(),
     )
@@ -55,25 +56,14 @@ class _LoginScreenState extends State<LoginScreen> {
         .user;
 
     if (firebaseUser != null) {
-      Map GuardMap = {
-        "id": firebaseUser.uid,
-        "name": "Michael",
-        "phone": "+14084791231",
-        "email": emailTextEditingController.text.trim(),
-        "password": passwordTextEditingController.text.trim(),
-      };
-      //save all the guards info into under the name called "guards"
-      DatabaseReference guardsRef =
-          FirebaseDatabase.instance.ref().child("guards");
-      guardsRef.child(firebaseUser.uid).set(GuardMap);
-
+      //save current user info
       currentFirebaseUser = firebaseUser;
-      Fluttertoast.showToast(msg: "New user account has been created.");
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const MainScreen()));
+      Fluttertoast.showToast(msg: "Login Successful.");
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => const MySplashScreen()));
     } else {
       Navigator.pop(context);
-      Fluttertoast.showToast(msg: "New user account has not been created.");
+      Fluttertoast.showToast(msg: "Error occurred during login.");
     }
   }
 
