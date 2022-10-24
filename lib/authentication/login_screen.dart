@@ -56,11 +56,23 @@ class _LoginScreenState extends State<LoginScreen> {
         .user;
 
     if (firebaseUser != null) {
-      //save current user info
-      currentFirebaseUser = firebaseUser;
-      Fluttertoast.showToast(msg: "Login Successful.");
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const MySplashScreen()));
+      DatabaseReference guardRef =
+          FirebaseDatabase.instance.ref().child("guards");
+      guardRef.child(firebaseUser.uid).once().then((guardKey) {
+        final snap = guardKey.snapshot;
+        if (snap.value != null) {
+          //save current user info
+          currentFirebaseUser = firebaseUser;
+          Fluttertoast.showToast(msg: "Login Successful.");
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const MySplashScreen()));
+        } else {
+          Fluttertoast.showToast(msg: "No record exist with this email.");
+          fAuth.signOut();
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const MySplashScreen()));
+        }
+      });
     } else {
       Navigator.pop(context);
       Fluttertoast.showToast(msg: "Error occurred during login.");
