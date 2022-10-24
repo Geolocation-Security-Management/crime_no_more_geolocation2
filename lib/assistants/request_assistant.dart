@@ -12,7 +12,6 @@ class RequestAssistant {
         String responseData = httpResponse.body; //json
 
         var decodeResponseData = jsonDecode(responseData);
-
         return decodeResponseData;
       } else {
         return "Error Occurred, Failed. No Response.";
