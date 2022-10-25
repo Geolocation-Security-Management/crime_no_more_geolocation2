@@ -1,6 +1,10 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_geofire/flutter_geofire.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -22,9 +26,13 @@ class _HomeTabState extends State<HomeTab> {
     zoom: 14.4746,
   );
 
-  Position? userCurrentPosition;
+  Position? guardCurrentPosition;
   var geoLocator = Geolocator();
   LocationPermission? _locationPermission;
+
+  String statusText = "Now Offline";
+  Color buttonColor = Colors.grey;
+  bool isGuardActive = false;
 
   checkIfLocationPermissionAllowed() async {
     _locationPermission = await Geolocator.requestPermission();
@@ -36,9 +44,9 @@ class _HomeTabState extends State<HomeTab> {
   locateGuardPosition() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    userCurrentPosition = position;
+    guardCurrentPosition = position;
     LatLng latLngPosition =
-        LatLng(userCurrentPosition!.latitude, userCurrentPosition!.longitude);
+        LatLng(guardCurrentPosition!.latitude, guardCurrentPosition!.longitude);
     CameraPosition cameraPosition =
         CameraPosition(target: latLngPosition, zoom: 14);
     newGoogleMapController
@@ -46,7 +54,7 @@ class _HomeTabState extends State<HomeTab> {
 
     String humanReadAddress =
         await AssistantMethods.searchAddressForGeographicCoOrdinates(
-            userCurrentPosition!, context);
+            guardCurrentPosition!, context);
     print("This is the human readable address: $humanReadAddress");
   }
 
@@ -71,7 +79,130 @@ class _HomeTabState extends State<HomeTab> {
             locateGuardPosition();
           },
         ),
+
+        //UI for online offline driver
+        statusText != "Now Online"
+            ? Container(
+                height: MediaQuery.of(context).size.height,
+                width: double.infinity,
+                color: Colors.black87,
+              )
+            : Container(),
+
+        //button for online offline driver
+        Positioned(
+          top: statusText != "Now Online"
+              ? MediaQuery.of(context).size.height * 0.46
+              : 25,
+          left: 0,
+          right: 0,
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            ElevatedButton(
+              onPressed: () {
+                if (isGuardActive != true) //offline
+                {
+                  GuardIsOnlineNow();
+                  updateGuardsLocationAtRealTime();
+
+                  setState(() {
+                    statusText = "Now Online";
+                    isGuardActive = true;
+                    buttonColor = Colors.transparent;
+                  });
+
+                  //display Toast
+                  Fluttertoast.showToast(msg: "you are Online now");
+                } else {
+                  guardIsOfflineNow();
+                  setState(() {
+                    statusText = "Now Offline";
+                    isGuardActive = false;
+                    buttonColor = Colors.grey;
+                  });
+
+                  //display Toast
+                  Fluttertoast.showToast(msg: "you are Offline now");
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: buttonColor,
+                padding: const EdgeInsets.symmetric(horizontal: 18),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(26),
+                ),
+              ),
+              child: statusText != "Now Online"
+                  ? Text(
+                      statusText,
+                      style: const TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(
+                      Icons.phonelink_ring,
+                      color: Colors.white,
+                      size: 26,
+                    ),
+            )
+          ]),
+        ),
       ],
     );
+  }
+
+  GuardIsOnlineNow() async {
+    Position pos = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    guardCurrentPosition = pos;
+    // same name as the node in realtime database node
+    Geofire.initialize("activeGuards");
+    Geofire.setLocation(currentFirebaseUser.uid, guardCurrentPosition!.latitude,
+        guardCurrentPosition!.longitude);
+
+    DatabaseReference ref = FirebaseDatabase.instance
+        .ref()
+        .child("guards")
+        .child(currentFirebaseUser.uid)
+        .child("newEventStatus"); // newEvents is the node name for the crime
+
+    ref.set("idle"); //searching for crime to attend to
+    ref.onValue.listen((event) {});
+  }
+
+  updateGuardsLocationAtRealTime() {
+    streamSubscriptionPosition =
+        Geolocator.getPositionStream().listen((Position position) {
+      guardCurrentPosition = position;
+      if (isGuardActive == true) {
+        Geofire.setLocation(currentFirebaseUser.uid,
+            guardCurrentPosition!.latitude, guardCurrentPosition!.longitude);
+      }
+
+      LatLng latLng = LatLng(
+          guardCurrentPosition!.latitude, guardCurrentPosition!.longitude);
+
+      newGoogleMapController.animateCamera(CameraUpdate.newLatLng(latLng));
+    });
+  }
+
+  guardIsOfflineNow() {
+    Geofire.removeLocation(currentFirebaseUser.uid);
+    DatabaseReference? ref = FirebaseDatabase.instance
+        .ref()
+        .child("guards")
+        .child(currentFirebaseUser.uid)
+        .child("newEventStatus");
+
+    ref.onDisconnect();
+    ref.remove();
+    ref = null;
+
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      //SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+      SystemNavigator.pop();
+    });
   }
 }
