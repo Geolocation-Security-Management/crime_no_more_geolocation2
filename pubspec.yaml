@@ -1,5 +1,5 @@
 name: crime_no_more_geolocation2
-description: A new Flutter project.
+description: The app that mobilize the guards in a better way. The nearest guard can receive the push notification from the control room once the crime scene is detected. The guard also will be navigated to the crime scene and update the situation time by time.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -46,6 +46,7 @@ dependencies:
   provider: ^6.0.4
   flutter_polyline_points: ^1.0.0
   flutter_geofire: ^2.0.1
+  firebase_messaging: ^14.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
