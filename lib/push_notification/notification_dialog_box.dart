@@ -1,3 +1,7 @@
+import 'package:crime_no_more_geolocation2/global/global.dart';
+import 'package:crime_no_more_geolocation2/mainScreens/new_trip_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 
@@ -182,8 +186,8 @@ class _NotificationDialogBoxState extends State<NotificationDialogBox> {
                       backgroundColor: Colors.green,
                     ),
                     onPressed: () {
-                      //cancel the request
-                      Navigator.pop(context);
+                      //accept the request
+                      acceptEventRequest(context);
                     },
                     child: Text(
                       "Accept".toUpperCase(),
@@ -215,6 +219,25 @@ class _NotificationDialogBoxState extends State<NotificationDialogBox> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  acceptEventRequest(BuildContext context) {
+    FirebaseDatabase.instance
+        .ref()
+        .child("guards")
+        .child(currentFirebaseUser.uid)
+        .child("newEventStatus")
+        .set("accepted");
+
+    //trip started now - send driver to new tripScreen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NewTripScreen(
+          eventRequestDetails: widget.eventRequestDetails,
         ),
       ),
     );
