@@ -27,7 +27,6 @@ class _HomeTabState extends State<HomeTab> {
     zoom: 14.4746,
   );
 
-  Position? guardCurrentPosition;
   var geoLocator = Geolocator();
   LocationPermission? _locationPermission;
 
