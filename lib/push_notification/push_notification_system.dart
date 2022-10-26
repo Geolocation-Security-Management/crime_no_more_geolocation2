@@ -1,3 +1,5 @@
+import 'package:crime_no_more_geolocation2/global/global.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class PushNotificationSystem {
@@ -25,5 +27,19 @@ class PushNotificationSystem {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage? remoteMessage) {
       //display the guards request information - the location and the crime details
     });
+  }
+
+  Future generateAndGetToken() async {
+    String? registrationToken = await messaging.getToken();
+    print("FCM Registration Token: $registrationToken");
+    FirebaseDatabase.instance
+        .ref()
+        .child("guards")
+        .child(currentFirebaseUser.uid)
+        .child("token")
+        .set(registrationToken);
+
+    messaging.subscribeToTopic("allGuards");
+    messaging.subscribeToTopic("controlRoom");
   }
 }

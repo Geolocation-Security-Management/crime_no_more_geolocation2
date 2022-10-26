@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:crime_no_more_geolocation2/push_notification/push_notification_system.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -58,10 +59,18 @@ class _HomeTabState extends State<HomeTab> {
     print("This is the human readable address: $humanReadAddress");
   }
 
+  readCurrentDriverInformation() async {
+    currentFirebaseUser = fAuth.currentUser!;
+    PushNotificationSystem pushNotificationSystem = PushNotificationSystem();
+    pushNotificationSystem.initializeCloudMessaging();
+    pushNotificationSystem.generateAndGetToken();
+  }
+
   @override
   void initState() {
     super.initState();
     checkIfLocationPermissionAllowed();
+    readCurrentDriverInformation();
   }
 
   @override
