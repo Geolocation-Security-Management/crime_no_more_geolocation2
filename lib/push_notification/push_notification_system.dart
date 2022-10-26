@@ -1,14 +1,17 @@
 import 'package:crime_no_more_geolocation2/global/global.dart';
 import 'package:crime_no_more_geolocation2/models/event_request_information.dart';
+import 'package:crime_no_more_geolocation2/push_notification/notification_dialog_box.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PushNotificationSystem {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  Future initializeCloudMessaging() async {
+  Future initializeCloudMessaging(BuildContext context) async {
     //1. Terminated state
     //When the app is completely closed and opened directly from the push notification
     FirebaseMessaging.instance
@@ -17,7 +20,7 @@ class PushNotificationSystem {
       if (remoteMessage != null) {
         //display the guards request information - the location and the crime details
         readControlRoomEventRequestInformation(
-            remoteMessage.data["eventRequestId"]);
+            remoteMessage.data["eventRequestId"], context);
       }
     });
     //2. Foreground state
@@ -25,7 +28,7 @@ class PushNotificationSystem {
     FirebaseMessaging.onMessage.listen((RemoteMessage? remoteMessage) {
       //display the guards request information - the location and the crime details
       readControlRoomEventRequestInformation(
-          remoteMessage?.data["eventRequestId"]);
+          remoteMessage?.data["eventRequestId"], context);
     });
 
     //3. Background state
@@ -33,11 +36,12 @@ class PushNotificationSystem {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage? remoteMessage) {
       //display the guards request information - the location and the crime details
       readControlRoomEventRequestInformation(
-          remoteMessage?.data["eventRequestId"]);
+          remoteMessage?.data["eventRequestId"], context);
     });
   }
 
-  readControlRoomEventRequestInformation(String eventRequestId) {
+  readControlRoomEventRequestInformation(
+      String eventRequestId, BuildContext context) {
     //specific eventRequestId in the realtime database
     FirebaseDatabase.instance
         .ref()
@@ -66,6 +70,13 @@ class PushNotificationSystem {
         eventRequestDetails.region = region;
         eventRequestDetails.severity_level = severity_level;
         eventRequestDetails.status = status;
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => NotificationDialogBox(
+            eventRequestDetails: eventRequestDetails,
+          ),
+        );
       } else {
         Fluttertoast.showToast(msg: "This event Request ID does not exist");
       }
