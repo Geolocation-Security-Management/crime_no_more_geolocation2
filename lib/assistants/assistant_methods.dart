@@ -16,7 +16,7 @@ class AssistantMethods {
   static Future<String> searchAddressForGeographicCoOrdinates(
       Position position, context) async {
     String apiUrl =
-        "https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.longitude},${position.latitude}&key=$mapKey";
+        "https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.latitude},${position.longitude}&key=$mapKey";
     String humanReadableAddress = "";
 
     var requestResponse = await RequestAssistant.receiveRequest(apiUrl);
