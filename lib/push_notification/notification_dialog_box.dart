@@ -1,3 +1,4 @@
+import 'package:crime_no_more_geolocation2/assistants/assistant_methods.dart';
 import 'package:crime_no_more_geolocation2/global/global.dart';
 import 'package:crime_no_more_geolocation2/mainScreens/new_trip_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -232,6 +233,7 @@ class _NotificationDialogBoxState extends State<NotificationDialogBox> {
         .child("newEventStatus")
         .set("accepted");
 
+    AssistantMethods.pauseLiveLocationUpdates();
     //trip started now - send driver to new tripScreen
     Navigator.push(
       context,

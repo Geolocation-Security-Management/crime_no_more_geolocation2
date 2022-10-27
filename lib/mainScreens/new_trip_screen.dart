@@ -4,6 +4,7 @@ import 'package:crime_no_more_geolocation2/global/global.dart';
 import 'package:crime_no_more_geolocation2/models/event_request_information.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../assistants/assistant_methods.dart';
@@ -36,6 +37,9 @@ class _NewTripScreenState extends State<NewTripScreen> {
   PolylinePoints polylinePoints = PolylinePoints();
 
   double mapPadding = 0;
+  BitmapDescriptor? iconAnimatedMarker;
+  var geoLocator = Geolocator();
+  Position? onlineGuardCurrentPosition;
   //1. originLatLng = guard current location
   //2. destinationLatLng = crime scene location
   Future<void> drawPolyLineFromOriginToDestination(
@@ -149,8 +153,48 @@ class _NewTripScreenState extends State<NewTripScreen> {
     });
   }
 
+  createDriverIconMarker() {
+    if (iconAnimatedMarker == null) {
+      ImageConfiguration imageConfiguration =
+          createLocalImageConfiguration(context, size: const Size(2, 2));
+      BitmapDescriptor.fromAssetImage(imageConfiguration, "images/car.png")
+          .then((value) {
+        iconAnimatedMarker = value;
+      });
+    }
+  }
+
+  getGuardsLocationUpdatesAtRealTime() {
+    streamSubscriptionGuardLivePosition =
+        Geolocator.getPositionStream().listen((Position position) {
+      guardCurrentPosition = position;
+      onlineGuardCurrentPosition = position;
+      LatLng latLngLiveGuardPosition = LatLng(
+          onlineGuardCurrentPosition!.latitude,
+          onlineGuardCurrentPosition!.longitude);
+
+      Marker animatingMarker = Marker(
+        markerId: const MarkerId("AnimatedMarker"),
+        position: latLngLiveGuardPosition,
+        icon: iconAnimatedMarker!,
+        infoWindow: const InfoWindow(title: "This is your Position"),
+      );
+      setState(() {
+        CameraPosition cameraPosition =
+            CameraPosition(target: latLngLiveGuardPosition, zoom: 16);
+        newTripGoogleMapController
+            .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
+        setOfMarkers.removeWhere(
+            (element) => element.markerId.value == "AnimatedMarker");
+        setOfMarkers.add(animatingMarker);
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    createDriverIconMarker();
     return Scaffold(
       body: Stack(
         children: [

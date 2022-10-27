@@ -10,4 +10,5 @@ final FirebaseAuth fAuth = FirebaseAuth.instance;
 User currentFirebaseUser = fAuth.currentUser!;
 UserModel? userModelCurrentInfo;
 late StreamSubscription<Position> streamSubscriptionPosition;
+late StreamSubscription<Position> streamSubscriptionGuardLivePosition;
 Position? guardCurrentPosition;
