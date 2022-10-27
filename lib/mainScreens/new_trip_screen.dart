@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:crime_no_more_geolocation2/global/global.dart';
 import 'package:crime_no_more_geolocation2/models/event_request_information.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
@@ -40,6 +41,10 @@ class _NewTripScreenState extends State<NewTripScreen> {
   BitmapDescriptor? iconAnimatedMarker;
   var geoLocator = Geolocator();
   Position? onlineGuardCurrentPosition;
+
+  String durationFromOriginToDestination = "";
+
+  bool isRequestDirectionDetails = false;
   //1. originLatLng = guard current location
   //2. destinationLatLng = crime scene location
   Future<void> drawPolyLineFromOriginToDestination(
@@ -165,6 +170,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
   }
 
   getGuardsLocationUpdatesAtRealTime() {
+    LatLng oldLatLng = LatLng(0, 0);
     streamSubscriptionGuardLivePosition =
         Geolocator.getPositionStream().listen((Position position) {
       guardCurrentPosition = position;
@@ -189,7 +195,38 @@ class _NewTripScreenState extends State<NewTripScreen> {
             (element) => element.markerId.value == "AnimatedMarker");
         setOfMarkers.add(animatingMarker);
       });
+      oldLatLng = latLngLiveGuardPosition;
+      updateDurationTimeAtRealTime();
+
+      Map guardLatLngDataMap = {
+        "latitude": onlineGuardCurrentPosition!.latitude.toString(),
+        "longitude": onlineGuardCurrentPosition!.longitude.toString(),
+      };
     });
+  }
+
+  updateDurationTimeAtRealTime() async {
+    if (isRequestDirectionDetails == false) {
+      isRequestDirectionDetails = true;
+      if (onlineGuardCurrentPosition == null) {
+        return;
+      }
+
+      var originLatLng = LatLng(onlineGuardCurrentPosition!.latitude,
+          onlineGuardCurrentPosition!.longitude);
+
+      var destinationLatLng = widget.eventRequestDetails!.destinationLatLng;
+
+      var directionInformation =
+          await AssistantMethods.obtainOriginToDestinationDirectionDetails(
+              originLatLng, destinationLatLng!);
+      if (directionInformation != null) {
+        setState(() {
+          durationFromOriginToDestination = directionInformation.duration_text!;
+        });
+      }
+      isRequestDirectionDetails = false;
+    }
   }
 
   @override
@@ -252,7 +289,7 @@ class _NewTripScreenState extends State<NewTripScreen> {
                   ),
                   //duration
                   Text(
-                    "18 mins",
+                    durationFromOriginToDestination,
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,

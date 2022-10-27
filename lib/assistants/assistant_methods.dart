@@ -67,9 +67,6 @@ class AssistantMethods {
     }
 
     DirectionDetailsInfo directionDetailsInfo = DirectionDetailsInfo();
-    print("\n\n\n\nHello World\n\n\n");
-    print(responseDirectionApi);
-    print("\n\n\n\nHello World\n\n\n");
     directionDetailsInfo.e_points =
         responseDirectionApi["routes"][0]["overview_polyline"]["points"];
 
