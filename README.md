@@ -1,16 +1,8 @@
 # Crime No More - Team Geolocation 2
 
-This project is a part of Embark 2022 program under Sunway Technology Track.
-## Members
-
-- Shaun Liew Xin Hong
-- Michael Jun Ze Kong
-- Joshua Ang Zhi Yuan
-- Chua Shang Hang
-  
 ## Description
 
-The app that mobilize the guards in a better way. The nearest guard can receive the push notification from the control room once the crime scene is detected. The guard also will be navigated to the crime scene and update the situation time by time. The control room can understand the crime scene and the guard's real time location.
+The geolocation security management system allows the active personnels to be better mobalised. The nearest guard can receive the push notification from the control room once the crime scene is reported. The guard can also naviagte to the crime scene through the mobile app and update the control room accordingly. The control room can track the crime scene and the guard's real time location.
 
 ## The progress done so far
 
