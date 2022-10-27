@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "316797706142",
+    "firebase_url": "https://crime-no-more-geolocation2-default-rtdb.firebaseio.com",
+    "project_id": "crime-no-more-geolocation2",
+    "storage_bucket": "crime-no-more-geolocation2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:316797706142:android:9841b4cbec507432e4808f",
+        "android_client_info": {
+          "package_name": "com.embark.crimenomoregeolocation2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "316797706142-r4op2e2cbeeb5gltlirlpigj0pvo9mv0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBIibPtI-ZNknNYqwMdwezdwpnRKidwoRg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "316797706142-r4op2e2cbeeb5gltlirlpigj0pvo9mv0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

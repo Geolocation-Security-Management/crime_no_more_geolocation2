@@ -1,16 +1,21 @@
 # crime_no_more_geolocation2
 
-A new Flutter project.
+The app that mobilize the guards in a better way. The nearest guard can receive the push notification from the control room once the crime scene is detected. The guard also will be navigated to the crime scene and update the situation time by time.
 
-## Getting Started
+## Tech stack used
 
-This project is a starting point for a Flutter application.
+### Mobile App
 
-A few resources to get you started if this is your first Flutter project:
+Flutter
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Web App
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Typescript and React
+
+### Backend Service
+
+Firebase
+
+### Cloud Service
+
+Google Cloud Platform and Google Map API

@@ -1,7 +1,11 @@
+import 'package:crime_no_more_geolocation2/splashScreen/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   runApp(
     MyApp(
       child: MaterialApp(
@@ -9,14 +13,7 @@ void main() async {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Crime No More'),
-          ),
-          body: const Center(
-            child: Text('Hello Embark'),
-          ),
-        ),
+        home: const MySplashScreen(),
         debugShowCheckedModeBanner: false,
       ),
     ),

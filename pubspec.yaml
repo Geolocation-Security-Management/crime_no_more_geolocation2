@@ -1,5 +1,5 @@
 name: crime_no_more_geolocation2
-description: A new Flutter project.
+description: The app that mobilize the guards in a better way. The nearest guard can receive the push notification from the control room once the crime scene is detected. The guard also will be navigated to the crime scene and update the situation time by time.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -36,7 +36,17 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-
+  firebase_core: ^2.1.0
+  firebase_auth: ^4.0.2
+  firebase_database: ^10.0.2
+  fluttertoast: ^8.1.1
+  google_maps_flutter: ^2.2.1
+  geolocator: ^9.0.2
+  http: ^0.13.5
+  provider: ^6.0.4
+  flutter_polyline_points: ^1.0.0
+  flutter_geofire: ^2.0.1
+  firebase_messaging: ^14.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -60,8 +70,14 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+     - assets/images/crime_no_more_logo.png
+     - assets/images/crime_scene_logo.png
+     - assets/images/details.png
+     - assets/images/location.png
+     - assets/images/region.png
+     - assets/images/severity_level.png
+     - assets/images/status.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
